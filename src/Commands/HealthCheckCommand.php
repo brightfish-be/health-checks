@@ -2,6 +2,8 @@
 
 namespace Brightfish\HealthChecks\Commands;
 
+use Brightfish\HealthChecks\Exceptions\BaseHealthException;
+use Brightfish\HealthChecks\Services\HealthService;
 use Illuminate\Console\Command;
 
 class HealthCheckCommand extends Command
@@ -12,8 +14,12 @@ class HealthCheckCommand extends Command
     /** @inheritdoc */
     public $description = 'Run one or more configured health checks.';
 
-    public function handle(): void
+    /**
+     * Run the checks.
+     * @throws BaseHealthException
+     */
+    public function handle(HealthService $healthService): void
     {
-        $this->comment('All done');
+        $healthService->run();
     }
 }

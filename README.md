@@ -1,4 +1,4 @@
-# Health checks for Laravel
+# Health checks for Laravel & Lumen
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/brightfish/health-checks.svg?style=flat-square)](https://packagist.org/packages/brightfish/health-checks)
 [![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/brightfish/health-checks/run-tests?label=tests)](https://github.com/brightfish/health-checks/actions?query=workflow%3Arun-tests+branch%3Amain)
@@ -11,14 +11,14 @@
 composer require brightfish/health-checks
 ```
 
-You can publish the config file with:
+Publish the config file with:
 ```bash
 php artisan vendor:publish --provider="Brightfish\HealthChecks\HealthServiceProvider" --tag="health-checks-config"
 ```
 
 ## Usage
 
-Add your check classes to the service provider.
+Add your health check classes to the config file.
 
 ## Testing
 
