@@ -11,14 +11,14 @@
 composer require brightfish/health-checks
 ```
 
-Publish the config file with:
-```bash
-php artisan vendor:publish --provider="Brightfish\HealthChecks\HealthServiceProvider" --tag="health-checks-config"
-```
+1. Publish the config file: `php artisan vendor:publish --provider="Brightfish\HealthChecks\HealthServiceProvider" --tag="health-checks-config"`
+2. Create custom health check classes, which extend `\Brightfish\HealthChecks\Checks\AbstractCheck` (for instance under app/Health).
+3. List up these classes in the config file (`health.checks`)
 
 ## Usage
 
-Add your health check classes to the config file.
+* `php artisan health:check`
+* `curl GET https://your.app/health`
 
 ## Testing
 
