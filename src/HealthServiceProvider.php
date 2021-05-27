@@ -19,7 +19,7 @@ class HealthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $config = $this->app->make('config')->get('health');
+        $config = (array)$this->app->make('config')->get('health');
 
         if ($config['router'] ?? false) {
             $this->bindRoutes($config['router']);
