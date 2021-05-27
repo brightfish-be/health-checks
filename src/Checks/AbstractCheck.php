@@ -3,11 +3,15 @@
 namespace Brightfish\HealthChecks\Checks;
 
 use Brightfish\HealthChecks\Services\HealthService;
+use Carbon\Carbon;
 use Psr\SimpleCache\CacheInterface;
 use Psr\SimpleCache\InvalidArgumentException;
 
 abstract class AbstractCheck
 {
+    /** @var string */
+    protected string $message = '';
+
     /**
      * Whether an exception for this check should be reported.
      * @var bool
@@ -29,14 +33,28 @@ abstract class AbstractCheck
     /**
      * Run the check.
      * @return bool
+     * @throws InvalidArgumentException
      */
     abstract public function run(): bool;
 
     /**
      * Return the error message.
+     * @param string $msg
+     * @return void
+     */
+    public function setMessage(string $msg): void
+    {
+        $this->message = $msg;
+    }
+
+    /**
+     * Return the error message.
      * @return string
      */
-    abstract public function getMessage(): string;
+    public function getMessage(): string
+    {
+        return $this->message;
+    }
 
     /**
      * AbstractCheck constructor.
@@ -82,10 +100,23 @@ abstract class AbstractCheck
      * @return int|null
      * @throws InvalidArgumentException
      */
-    protected function getDiffFromNow(string $key): ?int
+    protected function diffFromNow(string $key): ?int
     {
         $time = $this->getTime($key);
 
         return !is_null($time) ? strtotime('now') - $time : $time;
+    }
+
+    /**
+     * Format a readable time string from the given seconds.
+     * @param int $seconds
+     * @param string $format
+     * @return string
+     */
+    protected function diffForHumans(int $seconds, string $format = 'long'): string
+    {
+        $diff = (new Carbon())->addSeconds($seconds);
+
+        return $format === 'long' ? $diff->longAbsoluteDiffForHumans() : $diff->shortAbsoluteDiffForHumans();
     }
 }
