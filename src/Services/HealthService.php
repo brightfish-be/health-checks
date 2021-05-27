@@ -85,7 +85,8 @@ class HealthService
     }
 
     /**
-     * Store the time (of an artisan command).
+     * Store the time (of an artisan command or a matched route).
+     * @see \Brightfish\HealthChecks\HealthServiceProvider::registerEventListeners()
      * @param string $key
      * @return bool
      * @throws InvalidArgumentException
@@ -93,5 +94,16 @@ class HealthService
     public function setTime(string $key): bool
     {
         return $this->cache->set(static::createCacheTimeKey($key), strtotime('now'));
+    }
+
+    /**
+     * Get the cached timestamp (of an artisan command or a matched route).
+     * @param string $key
+     * @return int|null
+     * @throws InvalidArgumentException
+     */
+    public function getTime(string $key): ?int
+    {
+        return $this->cache->get(static::createCacheTimeKey($key));
     }
 }
