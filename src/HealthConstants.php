@@ -9,4 +9,7 @@ final class HealthConstants
 
     /** @var string */
     public const DEFAULT_ROUTE_URI = '/health';
+
+    /** @var string */
+    public const CACHE_TIME_KEY_PREFIX = 'health-time:';
 }

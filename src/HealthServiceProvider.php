@@ -4,7 +4,10 @@ namespace Brightfish\HealthChecks;
 
 use Brightfish\HealthChecks\Commands\HealthCheckCommand;
 use Brightfish\HealthChecks\Services\HealthService;
+use Illuminate\Console\Events\CommandStarting;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Routing\Events\RouteMatched;
+use Illuminate\Routing\Route;
 use Illuminate\Support\ServiceProvider;
 
 class HealthServiceProvider extends ServiceProvider
@@ -21,6 +24,8 @@ class HealthServiceProvider extends ServiceProvider
         if ($config['router'] ?? false) {
             $this->bindRoutes($config['router']);
         }
+
+        $this->registerEventListeners($config);
 
         if ($this->app->runningInConsole()) {
             $this->publishResources();
@@ -43,7 +48,9 @@ class HealthServiceProvider extends ServiceProvider
 
             unset($config['checks']);
 
-            return new HealthService($checks, $config);
+            $cache = $this->app->make('cache')->store();
+
+            return new HealthService($checks, $cache, $config);
         });
     }
 
@@ -62,6 +69,7 @@ class HealthServiceProvider extends ServiceProvider
             $router->get($routerConfig['uri'] ?? HealthConstants::DEFAULT_ROUTE_URI, [
                 'uses' => $controller,
                 'middleware' => $routerConfig['middleware'] ?? null,
+                'as' => 'health.check'
             ]);
         });
     }
@@ -88,5 +96,31 @@ class HealthServiceProvider extends ServiceProvider
     protected function isLaravelApp(): bool
     {
         return $this->app instanceof \Illuminate\Foundation\Application;
+    }
+
+    /**
+     * Register default listeners.
+     * @param array $config
+     * @throws BindingResolutionException
+     */
+    protected function registerEventListeners(array $config): void
+    {
+        if ($config['log_artisan_time'] ?? true) {
+            $this->app
+                ->make('events')
+                ->listen(CommandStarting::class, function(CommandStarting $event) {
+                    $this->app->make(HealthService::class)->setTime($event->command);
+                });
+        }
+
+        if ($config['log_router_time'] ?? false) {
+            $this->app
+                ->make('events')
+                ->listen(RouteMatched::class, function(Route $route) {
+                    $this->app->make(HealthService::class)->setTime(
+                        $route->getName() ?? $route->uri() ?? $route->getAction()
+                    );
+                });
+        }
     }
 }

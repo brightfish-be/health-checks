@@ -33,5 +33,20 @@ return [
         'middleware' => [
             //
         ],
-    ]
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Time logging
+    |--------------------------------------------------------------------------
+    |
+    | These settings will enable the automatic timestamp logging of every
+    | matched route request and artisan command.
+    |
+    */
+
+    'log_artisan_time' => true,
+
+    'log_router_time' => false,
+
 ];
