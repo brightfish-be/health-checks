@@ -42,7 +42,7 @@ class HealthServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(HealthConstants::CONFIG_PATH, 'health');
 
         $this->app->singleton(HealthService::class, function ($app) {
-            $config = $app->make('config')->get('health');
+            $config = (array)$app->make('config')->get('health');
 
             $checks = $config['checks'] ?? [];
 
