@@ -1,7 +1,7 @@
 {
     "name": "brightfish/health-checks",
     "description": "Simple health checks for Laravel",
-    "version": "0.6.0",
+    "version": "0.6.1",
     "keywords": [
         "brightfish",
         "laravel",
