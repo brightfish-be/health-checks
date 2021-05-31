@@ -19,34 +19,39 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Routing
+    | HTTP router configuration
     |--------------------------------------------------------------------------
     |
-    | This configures the health endpoints, it can be left falsy to disable
-    | HTTP health checking altogether.
+    | This configures the health endpoint, its middleware, as well as
+    | the recording of the timestamp of each matched routes. If the `path`
+    | property is left falsy, no routes will be created.
     |
     */
 
     'router' => [
-        'uri' => '/health',
+        'path' => '/health',
 
         'middleware' => [
             //
         ],
+
+        'log_time' => false
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | Time logging
+    | Artisan configuration
     |--------------------------------------------------------------------------
     |
-    | These settings will enable the automatic timestamp logging of every
-    | matched route request and artisan command.
+    | Enable the recording of the time whenever an artisan command in the
+    | given namespace finishes running.
     |
     */
 
-    'log_artisan_time' => true,
+    'artisan' => [
+        'cmd_namespace' => 'App\Console\Commands',
 
-    'log_router_time' => false,
+        'log_time' => false,
+    ],
 
 ];

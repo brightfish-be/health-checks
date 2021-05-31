@@ -4,7 +4,8 @@ namespace Brightfish\HealthChecks;
 
 use Brightfish\HealthChecks\Commands\HealthCheckCommand;
 use Brightfish\HealthChecks\Services\HealthService;
-use Illuminate\Console\Events\CommandStarting;
+use Illuminate\Console\Events\CommandFinished;
+use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Routing\Route;
@@ -21,7 +22,7 @@ class HealthServiceProvider extends ServiceProvider
     {
         $config = (array)$this->app->make('config')->get('health');
 
-        if ($config['router'] ?? false) {
+        if ($config['router']['path'] ?? false) {
             $this->bindRoutes($config['router']);
         }
 
@@ -66,7 +67,7 @@ class HealthServiceProvider extends ServiceProvider
         $this->app['router']->group([
             'namespace' => '\Brightfish\HealthChecks\Http\Controllers',
         ], function ($router) use ($routerConfig, $controller) {
-            $router->get($routerConfig['uri'] ?? HealthConstants::DEFAULT_ROUTE_URI, [
+            $router->get($routerConfig['path'] ?? HealthConstants::DEFAULT_ROUTE_URI, [
                 'uses' => $controller,
                 'middleware' => $routerConfig['middleware'] ?? null,
                 'as' => 'health.check'
@@ -80,9 +81,7 @@ class HealthServiceProvider extends ServiceProvider
      */
     protected function publishResources(): void
     {
-        $isLaravel = $this->isLaravelApp();
-
-        if ($isLaravel) {
+        if ($this->isLaravelApp()) {
             $this->publishes([
                 HealthConstants::CONFIG_PATH => config_path('health.php'),
             ], 'health-checks-config');
@@ -105,15 +104,17 @@ class HealthServiceProvider extends ServiceProvider
      */
     protected function registerEventListeners(array $config): void
     {
-        if ($config['log_artisan_time'] ?? true) {
+        if ($config['artisan']['log_time'] ?? true) {
             $this->app
                 ->make('events')
-                ->listen(CommandStarting::class, function(CommandStarting $event) {
-                    $this->app->make(HealthService::class)->setTime($event->command);
+                ->listen(CommandFinished::class, function(CommandFinished $event) use ($config) {
+                    if ($event->command && $this->isApplicationCommand($event->command, $config)) {
+                        $this->app->make(HealthService::class)->setTime($event->command);
+                    }
                 });
         }
 
-        if ($config['log_router_time'] ?? false) {
+        if ($config['router']['log_time'] ?? false) {
             $this->app
                 ->make('events')
                 ->listen(RouteMatched::class, function(Route $route) {
@@ -122,5 +123,22 @@ class HealthServiceProvider extends ServiceProvider
                     );
                 });
         }
+    }
+
+    /**
+     * Check if the given signature is of a custom application command.
+     * @param string $signature
+     * @param array $config
+     * @return bool
+     * @throws BindingResolutionException
+     */
+    protected function isApplicationCommand(string $signature, array $config): bool
+    {
+        $namespace = trim($config['artisan']['cmd_namespace'] ?? 'App\Console\Commands', '\\');
+
+        $commands = $this->app->make(Kernel::class)->all();
+
+        return !empty($commands[$signature])
+            && strpos(get_class($commands[$signature]), $namespace) === 0;
     }
 }
