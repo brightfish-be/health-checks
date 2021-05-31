@@ -8,6 +8,7 @@ use Brightfish\HealthChecks\Services\HealthService;
 use Brightfish\HealthChecks\Tests\TestChecks\InValidCheck;
 use Brightfish\HealthChecks\Tests\TestChecks\NonCheck;
 use Brightfish\HealthChecks\Tests\TestChecks\ValidCheck;
+use Illuminate\Contracts\Console\Kernel;
 
 class FeatureTest extends TestCase
 {
@@ -58,5 +59,33 @@ class FeatureTest extends TestCase
         ]);
 
         $this->app[HealthService::class]->run();
+    }
+
+    /** @test */
+    public function cmds_in_namespace_should_be_logged()
+    {
+        $this->app->config->set('health.artisan.cmd_namespace', 'Illuminate\Foundation\Console\ClosureCommand');
+
+        $artisan = $this->app->make(Kernel::class);
+
+        $artisan->command('time-test', function () {
+            return true;
+        });
+
+        $artisan->call('time-test');
+
+        $this->assertIsInt(
+            $this->app[HealthService::class]->getTime('time-test')
+        );
+    }
+
+    /** @test */
+    public function default_cmds_should_not_be_logged()
+    {
+        $this->app->make(Kernel::class)->call('list');
+
+        $this->assertTrue(
+            is_null($this->app[HealthService::class]->getTime('list'))
+        );
     }
 }

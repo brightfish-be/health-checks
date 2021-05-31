@@ -12,6 +12,13 @@ class TestCase extends Orchestra
         parent::setUp();
     }
 
+    /** @inheritDoc */
+    protected function defineEnvironment($app)
+    {
+        $app['config']->set('cache.default', 'array');
+    }
+
+    /** @inheritDoc */
     protected function getPackageProviders($app)
     {
         return [

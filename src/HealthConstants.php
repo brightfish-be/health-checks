@@ -12,4 +12,7 @@ final class HealthConstants
 
     /** @var string */
     public const CACHE_TIME_KEY_PREFIX = 'health-time:';
+
+    /** @var string */
+    public const DEFAULT_CMD_NS = 'App\Console\Commands';
 }
