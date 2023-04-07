@@ -71,7 +71,7 @@ class HealthServiceProvider extends ServiceProvider
             $router->get($routerConfig['path'] ?? HealthConstants::DEFAULT_ROUTE_URI, [
                 'uses' => $controller,
                 'middleware' => $routerConfig['middleware'] ?? null,
-                'as' => 'health.check'
+                'as' => 'health.check',
             ]);
         });
     }
@@ -108,7 +108,7 @@ class HealthServiceProvider extends ServiceProvider
         if ($config['artisan']['log_time'] ?? true) {
             $this->app
                 ->make('events')
-                ->listen(CommandFinished::class, function(CommandFinished $event) {
+                ->listen(CommandFinished::class, function (CommandFinished $event) {
                     if ($event->command && $this->isApplicationCommand($event->command)) {
                         $this->app->make(HealthService::class)->setTime($event->command);
                     }
@@ -118,7 +118,7 @@ class HealthServiceProvider extends ServiceProvider
         if ($config['router']['log_time'] ?? false) {
             $this->app
                 ->make('events')
-                ->listen(RouteMatched::class, function(Route $route) {
+                ->listen(RouteMatched::class, function (Route $route) {
                     $this->app->make(HealthService::class)->setTime(
                         $route->getName() ?? $route->uri() ?? $route->getAction()
                     );
@@ -140,7 +140,7 @@ class HealthServiceProvider extends ServiceProvider
 
         $commands = $this->app->make(Kernel::class)->all();
 
-        return !empty($commands[$signature])
+        return ! empty($commands[$signature])
             && strpos(get_class($commands[$signature]), $namespace) === 0;
     }
 }

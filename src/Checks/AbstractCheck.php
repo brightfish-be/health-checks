@@ -104,7 +104,7 @@ abstract class AbstractCheck
     {
         $time = $this->getTime($key);
 
-        return !is_null($time) ? strtotime('now') - $time : $time;
+        return ! is_null($time) ? strtotime('now') - $time : $time;
     }
 
     /**
