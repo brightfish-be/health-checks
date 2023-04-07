@@ -1,7 +1,6 @@
 {
     "name": "brightfish/health-checks",
     "description": "Simple health checks for Laravel",
-    "version": "0.6.1",
     "keywords": [
         "brightfish",
         "laravel",
@@ -17,13 +16,13 @@
         }
     ],
     "require": {
-        "php": "^7.4|^8.0",
-        "nesbot/carbon": "^1|^2"
+        "php": "^7.4 | ^8.0",
+        "nesbot/carbon": "^1 | ^2"
     },
     "require-dev": {
-        "brianium/paratest": "^6.2",
-        "nunomaduro/collision": "^5.3",
-        "orchestra/testbench": "^6.15",
+        "brianium/paratest": "^6.9",
+        "nunomaduro/collision": "^5.3 || ^6.0",
+        "orchestra/testbench": "^6.15 || ^7.0",
         "phpunit/phpunit": "^9.3",
         "vimeo/psalm": "^4.4"
     },
