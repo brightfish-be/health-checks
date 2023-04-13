@@ -1,6 +1,6 @@
 # Health checks for Laravel & Lumen
 
-[![GitHub Tests Action Status](https://github.com/brightfish-be/health-checks/workflows/Tests/badge.svg?event=push&style=flat-square)](https://github.com/brightfish/health-checks/actions)
+[![Tests](https://github.com/brightfish-be/health-checks/actions/workflows/run-tests.yml/badge.svg?style=flat-square&label=Tests)](https://github.com/brightfish-be/health-checks/actions/workflows/run-tests.yml)
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/brightfish/health-checks.svg?style=flat-square&label=Version)](https://packagist.org/packages/brightfish/health-checks)
 [![Total Downloads](https://img.shields.io/packagist/dt/brightfish/health-checks.svg?label=Downloads&style=flat-square)](https://packagist.org/packages/brightfish/health-checks)
 
