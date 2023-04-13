@@ -38,7 +38,7 @@ jobs:
           - laravel: 10.*
             php: 7.3
 
-    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }}
+    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
 
     steps:
       - name: Checkout code
@@ -59,7 +59,7 @@ jobs:
       - name: Install dependencies
         run: |
           composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench-core:${{ matrix.testbench }}" --no-interaction --no-update
-          composer update --${{ matrix.stability }} --no-interaction
+          composer update --${{ matrix.dependency-version }} --no-interaction
 
       - name: Execute tests
         run: vendor/bin/phpunit
