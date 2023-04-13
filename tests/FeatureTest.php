@@ -5,10 +5,14 @@ namespace Brightfish\HealthChecks\Tests;
 use Brightfish\HealthChecks\Exceptions\BaseHealthException;
 use Brightfish\HealthChecks\Exceptions\NonCheckException;
 use Brightfish\HealthChecks\Services\HealthService;
+use Brightfish\HealthChecks\Tests\Mocks\MockCommand;
 use Brightfish\HealthChecks\Tests\TestChecks\InValidCheck;
 use Brightfish\HealthChecks\Tests\TestChecks\NonCheck;
 use Brightfish\HealthChecks\Tests\TestChecks\ValidCheck;
+use Illuminate\Console\Events\CommandFinished;
 use Illuminate\Contracts\Console\Kernel;
+use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class FeatureTest extends TestCase
 {
@@ -64,18 +68,24 @@ class FeatureTest extends TestCase
     /** @test */
     public function cmds_in_namespace_should_be_logged()
     {
-        $this->app->config->set('health.artisan.cmd_namespace', 'Illuminate\Foundation\Console\ClosureCommand');
+        // Change the namespace to the mocked commands one.
+        $this->app['config']->set('health.artisan.cmd_namespace', 'Brightfish\HealthChecks\Tests\Mocks');
 
-        $artisan = $this->app->make(Kernel::class);
+        // From Laravel 10 Console commands aren't triggered during testing, so we trigger the event manually
+        // and we only test the listener in the HealthServiceProvider, instead of the whole feature.
 
-        $artisan->command('time-test', function () {
-            return true;
-        });
+        $input = new StringInput('');
 
-        $artisan->call('time-test');
+        $output = new ConsoleOutput();
+
+        event(new CommandFinished('health:mock', $input, $output, 0));
+
+        //$artisan = $this->app->make(Kernel::class);
+
+        //$artisan->call(MockCommand::class);
 
         $this->assertIsInt(
-            $this->app[HealthService::class]->getTime('time-test')
+            $this->app[HealthService::class]->getTime('health:mock')
         );
     }
 
