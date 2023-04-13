@@ -45,11 +45,11 @@ class HealthService
         foreach ($this->checks as $check) {
             $checkInstance = new $check($this->cache);
 
-            if (! $checkInstance instanceof AbstractCheck) {
+            if (!$checkInstance instanceof AbstractCheck) {
                 throw new NonCheckException($check);
             }
 
-            if (! $checkInstance->run()) {
+            if (!$checkInstance->run()) {
                 throw new HealthException($checkInstance);
             }
         }

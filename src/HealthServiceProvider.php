@@ -140,7 +140,7 @@ class HealthServiceProvider extends ServiceProvider
 
         $commands = $this->app->make(Kernel::class)->all();
 
-        return ! empty($commands[$signature])
+        return !empty($commands[$signature])
             && strpos(get_class($commands[$signature]), $namespace) === 0;
     }
 }
